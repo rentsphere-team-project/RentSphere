@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>RentSphere</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f8fc;
+      --surface: #ffffff;
+      --accent: #2563eb;
+      --accent2: #1d4ed8;
+      --accent-light: #eff6ff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%;
+      height: 68px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      animation: slideDown 0.6s ease both;
+      box-shadow: 0 1px 20px rgba(0,0,0,0.06);
+    }
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--text); }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a {
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 6px 0;
+      position: relative;
+      transition: color 0.25s;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 2px; background: var(--accent);
+      border-radius: 2px;
+      transform: scaleX(0); transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+    .nav-cta {
+      background: var(--accent) !important;
+      color: #fff !important;
+      padding: 8px 20px !important;
+      border-radius: 8px;
+      transition: background 0.25s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--accent2) !important; transform: translateY(-1px) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 120px 6% 80px;
+      background: linear-gradient(160deg, #f0f6ff 0%, #ffffff 50%, #f7f8fc 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1.5px solid rgba(37,99,235,0.25);
+      background: var(--accent-light);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 2rem;
+      animation: fadeUp 0.7s 0.3s ease both;
+      position: relative; z-index: 1;
+    }
+    .hero-badge::before {
+      content: ''; width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent); animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 8vw, 6rem);
+      font-weight: 900;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      animation: fadeUp 0.7s 0.45s ease both;
+      position: relative; z-index: 1;
+    }
+    .hero-title .blue { color: var(--accent); }
+
+    .hero-tagline {
+      margin-top: 1.2rem;
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      font-weight: 400;
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.7;
+      animation: fadeUp 0.7s 0.6s ease both;
+      position: relative; z-index: 1;
+    }
+
+    .hero-divider {
+      width: 50px; height: 3px;
+      background: linear-gradient(to right, var(--accent), #60a5fa);
+      border-radius: 2px;
+      margin: 2.2rem auto;
+      animation: fadeUp 0.7s 0.72s ease both;
+      position: relative; z-index: 1;
+    }
+
+    .hero-buttons {
+      display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+      animation: fadeUp 0.7s 0.85s ease both;
+      position: relative; z-index: 1;
+    }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 9px;
+      padding: 14px 32px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.28s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      border: 2px solid var(--accent);
+      box-shadow: 0 4px 18px rgba(37,99,235,0.25);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      border-color: var(--accent2);
+      transform: translateY(-3px);
+      box-shadow: 0 10px 30px rgba(37,99,235,0.3);
+    }
+
+    .btn-outline {
+      background: #fff;
+      color: var(--text);
+      border: 2px solid var(--border);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(37,99,235,0.12);
+    }
+
+    .btn-arrow { transition: transform 0.28s; }
+    .btn:hover .btn-arrow { transform: translateX(5px); }
+
+    /* ── Stats ── */
+    .stats {
+      display: flex; gap: 3rem; flex-wrap: wrap; justify-content: center;
+      align-items: center;
+      margin-top: 3.5rem;
+      animation: fadeUp 0.7s 1s ease both;
+      position: relative; z-index: 1;
+    }
+    .stat { text-align: center; }
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+    .stat-divider {
+      width: 1px; height: 40px;
+      background: var(--border);
+    }
+
+    /* ── Cards ── */
+    .cards-section {
+      padding: 6rem 6%;
+      background: var(--bg2);
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .section-label {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+    }
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 700;
+      text-align: center;
+      color: var(--text);
+      margin-bottom: 3rem;
+    }
+    .cards-grid {
+      display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
+      width: 100%; max-width: 960px;
+    }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2.2rem;
+      width: 270px;
+      transition: all 0.32s ease;
+      animation: fadeUp 0.7s ease both;
+    }
+    .card:nth-child(1) { animation-delay: 0.1s; }
+    .card:nth-child(2) { animation-delay: 0.22s; }
+    .card:nth-child(3) { animation-delay: 0.34s; }
+    .card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: 0 16px 40px rgba(37,99,235,0.1);
+    }
+
+    .card-icon {
+      width: 52px; height: 52px;
+      background: var(--accent-light);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem;
+      margin-bottom: 1.2rem;
+    }
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text); margin-bottom: 0.55rem;
+    }
+    .card-desc {
+      font-size: 0.875rem; color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 6%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      background: #fff;
+    }
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--accent);
+    }
+    .footer-text { font-size: 0.8rem; color: var(--muted); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .nav-links { gap: 1rem; }
+      .stats { gap: 1.5rem; }
+      .stat-divider { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <div class="nav-logo">Rent<span>Sphere</span></div>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="property.html">Properties</a></li>
+      <li><a href="vehicle.html" class="nav-cta">Vehicles</a></li>
+    </ul>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">✦ India's Rental Platform</div>
+
+    <h1 class="hero-title">
+      Rent<span class="blue">Sphere</span>
+    </h1>
+
+    <p class="hero-tagline">Find your perfect rental — properties & vehicles, all in one place.</p>
+
+    <div class="hero-divider"></div>
+
+    <div class="hero-buttons">
+      <a href="property.html" class="btn btn-primary">
+        🏠 View Properties <span class="btn-arrow">→</span>
+      </a>
+      <a href="vehicle.html" class="btn btn-outline">
+        🚗 View Vehicles <span class="btn-arrow">→</span>
+      </a>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">Properties</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-number">200+</div>
+        <div class="stat-label">Vehicles</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Cities</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Feature Cards -->
+  <section class="cards-section">
+    <div class="section-label">Why Choose Us</div>
+    <div class="section-title">Everything you need, in one place</div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-icon">🏡</div>
+        <div class="card-title">Premium Properties</div>
+        <div class="card-desc">Browse apartments, villas, and studios handpicked for comfort and value.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚙</div>
+        <div class="card-title">Vehicle Rentals</div>
+        <div class="card-desc">From sedans to SUVs — find the perfect ride for any occasion or trip.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔒</div>
+        <div class="card-title">Safe & Verified</div>
+        <div class="card-desc">All listings are verified. Rent with confidence and zero hidden charges.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">RentSphere</div>
+    <div class="footer-text">© 2024 RentSphere. Built for your comfort.</div>
+  </footer>
+
+  <script src="script.js"></script>
+
+</body>
+</html>

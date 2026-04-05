@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vehicles – RentSphere</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #ffffff;
+      --bg2: #f7f8fc;
+      --surface: #ffffff;
+      --accent: #2563eb;
+      --accent2: #1d4ed8;
+      --accent-light: #eff6ff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #16a34a;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg2);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Navbar ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%;
+      height: 68px;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 1px 20px rgba(0,0,0,0.06);
+      animation: slideDown 0.6s ease both;
+    }
+
+    @keyframes slideDown {
+      from { transform: translateY(-100%); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.55rem; font-weight: 900;
+      color: var(--accent); letter-spacing: 0.02em;
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--text); }
+
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a {
+      font-size: 0.88rem; font-weight: 500;
+      letter-spacing: 0.03em; color: var(--muted);
+      text-decoration: none; padding: 6px 0;
+      position: relative; transition: color 0.25s;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0; right: 0;
+      height: 2px; background: var(--accent); border-radius: 2px;
+      transform: scaleX(0); transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+
+    .nav-cta {
+      background: var(--accent) !important; color: #fff !important;
+      padding: 8px 20px !important; border-radius: 8px;
+      transition: background 0.25s, transform 0.2s !important;
+    }
+    .nav-cta:hover { background: var(--accent2) !important; transform: translateY(-1px) !important; }
+    .nav-cta::after { display: none !important; }
+
+    /* ── Page Banner ── */
+    .page-banner {
+      margin-top: 68px;
+      background: linear-gradient(160deg, #f0f6ff 0%, #ffffff 50%, #f7f8fc 100%);
+      padding: 4rem 6% 2.5rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+    .page-banner::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .page-banner .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1.5px solid rgba(37,99,235,0.25);
+      background: var(--accent-light);
+      border-radius: 100px;
+      padding: 6px 18px;
+      font-size: 0.75rem; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--accent);
+      font-weight: 600; margin-bottom: 1rem;
+      position: relative; z-index: 1;
+    }
+    .page-banner h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 900; color: var(--text);
+      margin-bottom: 0.5rem;
+      position: relative; z-index: 1;
+    }
+    .page-banner h1 span { color: var(--accent); }
+    .page-banner p {
+      font-size: 1rem; color: var(--muted);
+      max-width: 500px; margin: 0 auto;
+      position: relative; z-index: 1;
+    }
+
+    /* ── Filter Bar ── */
+    .filter-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 6%;
+      display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+      animation: fadeUp 0.7s 0.35s ease both;
+    }
+
+    .filter-group { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; }
+
+    .filter-btn {
+      padding: 7px 18px;
+      border-radius: 50px;
+      border: 1.5px solid var(--border);
+      background: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.83rem; font-weight: 500;
+      color: var(--muted); cursor: pointer;
+      transition: all 0.22s ease;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--accent);
+      background: var(--accent-light);
+      color: var(--accent); font-weight: 600;
+    }
+
+    .filter-select {
+      padding: 8px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; color: var(--text);
+      background: #fff; outline: none; cursor: pointer;
+      transition: border-color 0.22s;
+    }
+    .filter-select:focus, .filter-select:hover { border-color: var(--accent); }
+
+    .results-count { font-size: 0.83rem; color: var(--muted); font-weight: 500; }
+    .results-count span { color: var(--accent); font-weight: 700; }
+
+    /* ── Main Section ── */
+    .main-section {
+      padding: 2.5rem 6% 4rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    /* ── Section Heading ── */
+    .section-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.35rem; font-weight: 700;
+      color: var(--text);
+      margin: 2rem 0 1.2rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 2px solid var(--accent-light);
+      display: flex; align-items: center; gap: 0.6rem;
+    }
+    .section-heading .count-badge {
+      background: var(--accent-light);
+      color: var(--accent);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.72rem; font-weight: 600;
+      padding: 3px 10px; border-radius: 50px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Vehicle Grid ── */
+    .vehicle-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Vehicle Card ── */
+    .vehicle-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .vehicle-card:hover {
+      transform: translateY(-7px);
+      border-color: rgba(37,99,235,0.3);
+      box-shadow: 0 16px 40px rgba(37,99,235,0.1);
+    }
+
+    .card-img-wrap {
+      position: relative; overflow: hidden;
+      height: 200px;
+    }
+    .card-img-wrap img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .vehicle-card:hover .card-img-wrap img { transform: scale(1.05); }
+
+    .card-badge {
+      position: absolute; top: 12px; left: 12px;
+      color: #fff;
+      font-size: 0.7rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 50px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+      background: var(--accent);
+    }
+    .card-badge.available { background: var(--success); }
+    .card-badge.popular   { background: #f59e0b; }
+    .card-badge.premium   { background: #7c3aed; }
+
+    .card-body { padding: 1.3rem; }
+
+    .card-type {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.3rem;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem; font-weight: 700;
+      color: var(--text); margin-bottom: 0.25rem;
+    }
+
+    .card-location {
+      font-size: 0.82rem; color: var(--muted);
+      margin-bottom: 0.8rem;
+    }
+
+    .card-specs {
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .spec-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.78rem; color: var(--muted); font-weight: 500;
+    }
+
+    .card-divider { height: 1px; background: var(--border); margin-bottom: 1rem; }
+
+    .card-footer { display: flex; align-items: center; justify-content: space-between; }
+
+    .card-price {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem; font-weight: 700;
+      color: var(--accent);
+    }
+    .card-price span {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.75rem; color: var(--muted); font-weight: 400;
+    }
+
+    .btn-book {
+      background: var(--success); color: #fff;
+      border: none; border-radius: 8px;
+      padding: 9px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 12px rgba(22,163,74,0.25);
+    }
+    .btn-book:hover {
+      background: #15803d;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(22,163,74,0.3);
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 6%;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 1rem;
+      background: #fff;
+    }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.15rem; font-weight: 700; color: var(--accent); }
+    .footer-text { font-size: 0.8rem; color: var(--muted); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 600px) {
+      .vehicle-grid { grid-template-columns: 1fr; }
+      .filter-bar { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav>
+    <a href="index.html" class="nav-logo">Rent<span>Sphere</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="property.html">Properties</a></li>
+      <li><a href="vehicle.html" class="nav-cta">Vehicles</a></li>
+    </ul>
+  </nav>
+
+  <!-- Page Banner -->
+  <div class="page-banner">
+    <div class="badge">🚗 Vehicle Rentals</div>
+    <h1>Find Your Perfect <span>Ride</span></h1>
+    <p>Cars, bikes & more — verified listings across 50+ cities in India.</p>
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="filter-group">
+      <button class="filter-btn active" onclick="filterVehicles('all', this)">All</button>
+      <button class="filter-btn" onclick="filterVehicles('car', this)">🚗 Cars</button>
+      <button class="filter-btn" onclick="filterVehicles('bike', this)">🏍️ Bikes</button>
+      <button class="filter-btn" onclick="filterVehicles('suv', this)">🚙 SUVs</button>
+    </div>
+    <div class="filter-group">
+      <select class="filter-select" onchange="sortVehicles(this.value)">
+        <option value="">Sort By</option>
+        <option value="low">Price: Low to High</option>
+        <option value="high">Price: High to Low</option>
+      </select>
+      <span class="results-count">Showing <span id="count">25</span> vehicles</span>
+    </div>
+  </div>
+
+  <!-- Main Section -->
+  <div class="main-section">
+
+    <!-- ═══ CARS (9) ═══ -->
+    <div class="section-heading" id="carsHeading">🚗 Cars <span class="count-badge">9 Listings</span></div>
+    <div class="vehicle-grid" id="carsGrid">
+
+      <div class="vehicle-card" data-type="car" data-price="1499">
+        <div class="card-img-wrap">
+          <img src="https://www.motorbeam.com/wp-content/uploads/Maruti-Swift-Specifications-1200x900.jpg" alt="Maruti Swift" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Maruti Swift</div>
+          <div class="card-location">📍 Mumbai, Maharashtra</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2022</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹1,499 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="2199">
+        <div class="card-img-wrap">
+          <img src="https://www.team-bhp.com/sites/default/files/styles/check_extra_large_for_review/public/IMG_1417.jpg" alt="Hyundai i20" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Hyundai i20</div>
+          <div class="card-location">📍 Bangalore, Karnataka</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹2,199 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="1799">
+        <div class="card-img-wrap">
+          <img src="https://akm-img-a-in.tosshub.com/indiatoday/images/story/202412/tata-nexon-long-term-review--intro-02572712-16x9_0.jpg?VersionId=QDSxvrUdPKixUpl_2AHsDlk5TGDCGwL4" alt="Tata Nexon" />
+          <span class="card-badge popular">Popular</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Tata Nexon</div>
+          <div class="card-location">📍 Pune, Maharashtra</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹1,799 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="1299">
+        <div class="card-img-wrap">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/d/d7/2018_Suzuki_Karimun_Wagon_R_GL_%28front%29.jpg" alt="Maruti Wagon R" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Maruti Wagon R</div>
+          <div class="card-location">📍 Delhi, NCR</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ CNG</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2022</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹1,299 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="2499">
+        <div class="card-img-wrap">
+          <img src="https://images.overdrive.in/wp-content/uploads/2017/09/Hyundai-Verna-vs-Honda-City-Comparo_-97.jpg" alt="Honda City" />
+          <span class="card-badge popular">Popular</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Honda City</div>
+          <div class="card-location">📍 Chennai, Tamil Nadu</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ CVT Auto</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹2,499 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="2999">
+        <div class="card-img-wrap">
+          <img src="https://turbocharged.in/wp-content/uploads/2024/01/Hyundai-Verna-Garage-update.jpg" alt="Hyundai Verna" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Hyundai Verna</div>
+          <div class="card-location">📍 Hyderabad, Telangana</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹2,999 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="1599">
+        <div class="card-img-wrap">
+          <img src="https://stimg.cardekho.com/images/carexteriorimages/930x620/Maruti/Baleno/10492/1753944173342/exterior-image-164.jpg" alt="Maruti Baleno" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Maruti Baleno</div>
+          <div class="card-location">📍 Jaipur, Rajasthan</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ AMT Auto</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹1,599 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="3499">
+        <div class="card-img-wrap">
+          <img src="https://assets.volkswagen.com/is/image/volkswagenag/Virtus_Price%20Section%201920x1080?Zml0PWNyb3AsMSZmbXQ9cG5nJndpZD04MDAmYWxpZ249MC4wMCwwLjAwJmJmYz1vZmYmYzRiMA==" alt="Volkswagen Virtus" />
+          <span class="card-badge premium">Premium</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Volkswagen Virtus</div>
+          <div class="card-location">📍 Ahmedabad, Gujarat</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ DSG Auto</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹3,499 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="car" data-price="1899">
+        <div class="card-img-wrap">
+          <img src="https://turbocharged.in/wp-content/uploads/2024/09/Tiago-EV.jpg" alt="Tata Tiago" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Car</div>
+          <div class="card-title">Tata Tiago</div>
+          <div class="card-location">📍 Kolkata, West Bengal</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ AMT Auto</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹1,899 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end carsGrid -->
+
+    <!-- ═══ BIKES (10) ═══ -->
+    <div class="section-heading" id="bikesHeading">🏍️ Bikes <span class="count-badge">10 Listings</span></div>
+    <div class="vehicle-grid" id="bikesGrid">
+
+      <div class="vehicle-card" data-type="bike" data-price="599">
+        <div class="card-img-wrap">
+          <img src="https://motoringworld.in/wp-content/uploads/2024/12/Survivor-RE-Classic-350.png" alt="Royal Enfield Classic 350" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Royal Enfield Classic 350</div>
+          <div class="card-location">📍 Goa</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹599 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="399">
+        <div class="card-img-wrap">
+          <img src="https://cdn-s3.autocarindia.com/honda-bike/Activa%206G/_DSC8819.JPG?w=640&q=75" alt="Honda Activa 6G" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Honda Activa 6G</div>
+          <div class="card-location">📍 Hyderabad, Telangana</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Scooter</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹399 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="799">
+        <div class="card-img-wrap">
+          <img src="https://imgd.aeplcdn.com/642x361/n/cw/ec/45557/ktm-duke-200-front-right-three-quarter5.jpeg?wm=2&q=75" alt="KTM Duke 200" />
+          <span class="card-badge popular">Popular</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">KTM Duke 200</div>
+          <div class="card-location">📍 Bangalore, Karnataka</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹799 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="449">
+        <div class="card-img-wrap">
+          <img src="https://i0.wp.com/www.bikex.in/wp-content/uploads/2024/10/jupiter-125-1-1.jpeg?fit=1280%2C960&ssl=1" alt="TVS Jupiter 125" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">TVS Jupiter 125</div>
+          <div class="card-location">📍 Chennai, Tamil Nadu</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Scooter</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹449 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="699">
+        <div class="card-img-wrap">
+          <img src="https://imgd.aeplcdn.com/664x374/n/cw/ec/58025/right-front-three-quarter.jpeg?q=80" alt="Bajaj Pulsar NS200" />
+          <span class="card-badge popular">Popular</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Bajaj Pulsar NS200</div>
+          <div class="card-location">📍 Pune, Maharashtra</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹699 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="999">
+        <div class="card-img-wrap">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Royal_Enfield_Himalyana_DB2K5445.jpg/1280px-Royal_Enfield_Himalyana_DB2K5445.jpg" alt="Royal Enfield Himalayan" />
+          <span class="card-badge premium">Premium</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Royal Enfield Himalayan</div>
+          <div class="card-location">📍 Manali, Himachal Pradesh</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹999 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="349">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1624969862293-b749659ccc4e?w=600&q=80" alt="Hero Splendor Plus" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Hero Splendor Plus</div>
+          <div class="card-location">📍 Lucknow, Uttar Pradesh</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹349 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="549">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1622186477895-f2af6a0f5a97?w=600&q=80" alt="Yamaha FZ-S V3" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Yamaha FZ-S V3</div>
+          <div class="card-location">📍 Kolkata, West Bengal</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹549 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="1299">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80" alt="Kawasaki Ninja 300" />
+          <span class="card-badge premium">Premium</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Kawasaki Ninja 300</div>
+          <div class="card-location">📍 Mumbai, Maharashtra</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Manual</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2022</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹1,299 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="bike" data-price="479">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1600703175004-f88f76957e00?w=600&q=80" alt="Suzuki Access 125" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">Bike</div>
+          <div class="card-title">Suzuki Access 125</div>
+          <div class="card-location">📍 Jaipur, Rajasthan</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Scooter</div>
+            <div class="spec-item">👥 2 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹479 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end bikesGrid -->
+
+    <!-- ═══ SUVs (6) ═══ -->
+    <div class="section-heading" id="suvsHeading">🚙 SUVs <span class="count-badge">6 Listings</span></div>
+    <div class="vehicle-grid" id="suvsGrid">
+
+      <div class="vehicle-card" data-type="suv" data-price="3499">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=600&q=80" alt="Mahindra Scorpio N" />
+          <span class="card-badge popular">Popular</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">SUV</div>
+          <div class="card-title">Mahindra Scorpio N</div>
+          <div class="card-location">📍 Pune, Maharashtra</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Diesel</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 7 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹3,499 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="suv" data-price="4499">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=600&q=80" alt="Toyota Fortuner" />
+          <span class="card-badge popular">Popular</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">SUV</div>
+          <div class="card-title">Toyota Fortuner</div>
+          <div class="card-location">📍 Delhi, NCR</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Diesel</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 7 Seats</div>
+            <div class="spec-item">📅 2022</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹4,499 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="suv" data-price="2799">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=600&q=80" alt="Hyundai Creta" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">SUV</div>
+          <div class="card-title">Hyundai Creta</div>
+          <div class="card-location">📍 Mumbai, Maharashtra</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹2,799 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="suv" data-price="2499">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1614200187524-dc4b892acf16?w=600&q=80" alt="Tata Harrier" />
+          <span class="card-badge available">Available</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">SUV</div>
+          <div class="card-title">Tata Harrier</div>
+          <div class="card-location">📍 Bangalore, Karnataka</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Diesel</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹2,499 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="suv" data-price="5999">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1617654112368-307921291f42?w=600&q=80" alt="Land Rover Defender" />
+          <span class="card-badge premium">Premium</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">SUV</div>
+          <div class="card-title">Land Rover Defender</div>
+          <div class="card-location">📍 Mumbai, Maharashtra</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Diesel</div>
+            <div class="spec-item">⚙️ Automatic</div>
+            <div class="spec-item">👥 7 Seats</div>
+            <div class="spec-item">📅 2023</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹5,999 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="vehicle-card" data-type="suv" data-price="3199">
+        <div class="card-img-wrap">
+          <img src="https://images.unsplash.com/photo-1609521263047-f8f205293f24?w=600&q=80" alt="Kia Seltos" />
+          <span class="card-badge popular">Popular</span>
+        </div>
+        <div class="card-body">
+          <div class="card-type">SUV</div>
+          <div class="card-title">Kia Seltos</div>
+          <div class="card-location">📍 Hyderabad, Telangana</div>
+          <div class="card-specs">
+            <div class="spec-item">⛽ Petrol</div>
+            <div class="spec-item">⚙️ DCT Auto</div>
+            <div class="spec-item">👥 5 Seats</div>
+            <div class="spec-item">📅 2024</div>
+          </div>
+          <div class="card-divider"></div>
+          <div class="card-footer">
+            <div class="card-price">₹3,199 <span>/ day</span></div>
+            <button class="btn-book bookBtn">Book Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end suvsGrid -->
+  </div><!-- end main-section -->
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-logo">RentSphere</div>
+    <div class="footer-text">© 2024 RentSphere. Built for your comfort.</div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    // All cards across all grids
+    function allCards() {
+      return document.querySelectorAll('.vehicle-card');
+    }
+
+    // Filter by type
+    function filterVehicles(type, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Show/hide section headings
+      const carsHeading  = document.getElementById('carsHeading');
+      const bikesHeading = document.getElementById('bikesHeading');
+      const suvsHeading  = document.getElementById('suvsHeading');
+
+      let count = 0;
+      allCards().forEach(card => {
+        if (type === 'all' || card.dataset.type === type) {
+          card.style.display = '';
+          count++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Toggle headings
+      carsHeading.style.display  = (type === 'all' || type === 'car')  ? '' : 'none';
+      bikesHeading.style.display = (type === 'all' || type === 'bike') ? '' : 'none';
+      suvsHeading.style.display  = (type === 'all' || type === 'suv')  ? '' : 'none';
+
+      document.getElementById('count').textContent = count;
+    }
+
+    // Sort by price — merges all visible cards into one temp grid
+    function sortVehicles(order) {
+      if (!order) return;
+
+      // Collect all visible cards
+      const allGrids = ['carsGrid', 'bikesGrid', 'suvsGrid'];
+      let cards = [];
+      allGrids.forEach(id => {
+        const grid = document.getElementById(id);
+        grid.querySelectorAll('.vehicle-card').forEach(c => {
+          if (c.style.display !== 'none') cards.push({ card: c, grid });
+        });
+      });
+
+      cards.sort((a, b) => {
+        const pa = parseInt(a.card.dataset.price);
+        const pb = parseInt(b.card.dataset.price);
+        return order === 'low' ? pa - pb : pb - pa;
+      });
+
+      // Re-append in sorted order (they move visually within their own grids; 
+      // for cross-grid sort, we move them all into a single sorted grid)
+      const mainSection = document.querySelector('.main-section');
+
+      // Create or reuse a sort-results div
+      let sortedDiv = document.getElementById('sortedGrid');
+      if (!sortedDiv) {
+        sortedDiv = document.createElement('div');
+        sortedDiv.id = 'sortedGrid';
+        sortedDiv.className = 'vehicle-grid';
+        sortedDiv.style.marginTop = '1rem';
+      } else {
+        sortedDiv.innerHTML = '';
+      }
+
+      // Hide all section headings and grids
+      ['carsHeading','bikesHeading','suvsHeading','carsGrid','bikesGrid','suvsGrid'].forEach(id => {
+        document.getElementById(id).style.display = 'none';
+      });
+
+      // Add a single heading
+      let sortHeading = document.getElementById('sortHeading');
+      if (!sortHeading) {
+        sortHeading = document.createElement('div');
+        sortHeading.id = 'sortHeading';
+        sortHeading.className = 'section-heading';
+        mainSection.insertBefore(sortHeading, mainSection.firstChild);
+      }
+      sortHeading.innerHTML = (order === 'low' ? '⬆️ Price: Low to High' : '⬇️ Price: High to Low') +
+        ' <span class="count-badge">' + cards.length + ' Vehicles</span>';
+      sortHeading.style.display = '';
+
+      cards.forEach(({ card }) => sortedDiv.appendChild(card));
+      mainSection.appendChild(sortedDiv);
+    }
+
+    // Reset sort back to sections when "Sort By" is re-selected
+    document.querySelector('.filter-select').addEventListener('change', function() {
+      if (!this.value) {
+        // Restore section layout
+        ['carsHeading','bikesHeading','suvsHeading','carsGrid','bikesGrid','suvsGrid'].forEach(id => {
+          document.getElementById(id).style.display = '';
+        });
+        const sortHeading = document.getElementById('sortHeading');
+        const sortedDiv   = document.getElementById('sortedGrid');
+        if (sortHeading) sortHeading.style.display = 'none';
+
+        // Move cards back to their original grids
+        if (sortedDiv) {
+          sortedDiv.querySelectorAll('.vehicle-card').forEach(card => {
+            const type = card.dataset.type;
+            const targetGrid = type === 'car' ? 'carsGrid' : type === 'bike' ? 'bikesGrid' : 'suvsGrid';
+            document.getElementById(targetGrid).appendChild(card);
+          });
+          sortedDiv.remove();
+        }
+      }
+    });
+
+    // Book Now buttons
+    document.querySelectorAll('.bookBtn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        alert('Booking Successful! 🎉');
+      });
+    });
+
+    // Set total count on load
+    document.getElementById('count').textContent = allCards().length;
+  </script>
+</body>
+</html>

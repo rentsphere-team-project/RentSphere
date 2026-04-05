@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Properties – RentSphere</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary:       #2563eb;
+      --primary-dark:  #1d4ed8;
+      --primary-light: #eff6ff;
+      --text:          #0f172a;
+      --muted:         #64748b;
+      --bg2:           #f7f8fc;
+      --border:        #e2e8f0;
+    }
+
+    body { font-family: 'DM Sans', Arial, sans-serif; background: var(--bg2); color: var(--text); min-height: 100vh; }
+
+    /* NAVBAR */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 5%; height: 66px;
+      background: rgba(255,255,255,0.97);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+    .nav-logo { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; color: var(--primary); text-decoration: none; }
+    .nav-logo span { color: var(--text); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+    .nav-links a { font-size: 0.88rem; font-weight: 500; color: var(--muted); text-decoration: none; position: relative; padding: 5px 0; transition: color 0.25s; }
+    .nav-links a::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background: var(--primary); border-radius: 2px; transform: scaleX(0); transform-origin: right; transition: transform 0.25s; }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+    .nav-links a.active { color: var(--primary); font-weight: 600; }
+    .nav-links a.active::after { transform: scaleX(1); }
+    .nav-btn { background: var(--primary); color: #fff !important; padding: 8px 20px !important; border-radius: 8px; font-weight: 600 !important; }
+    .nav-btn:hover { background: var(--primary-dark) !important; }
+    .nav-btn::after { display: none !important; }
+
+    /* SEARCH */
+    .search-section { background: linear-gradient(135deg, var(--primary-light) 0%, #fff 60%); padding: 2.5rem 5%; text-align: center; border-bottom: 1px solid var(--border); }
+    .search-section h2 { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; color: var(--text); margin-bottom: 1.2rem; }
+    .search-section h2 span { color: var(--primary); }
+    .search-bar { display: flex; align-items: center; max-width: 620px; margin: 0 auto; background: #fff; border: 1.5px solid var(--border); border-radius: 50px; padding: 6px 6px 6px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); transition: box-shadow 0.25s; }
+    .search-bar:focus-within { border-color: var(--primary); box-shadow: 0 4px 24px rgba(37,99,235,0.15); }
+    .search-bar input { flex: 1; border: none; outline: none; font-size: 0.92rem; color: var(--text); font-family: 'DM Sans', Arial, sans-serif; background: transparent; }
+    .search-bar input::placeholder { color: #aab; }
+    .search-bar button { background: var(--primary); color: #fff; border: none; padding: 10px 26px; border-radius: 50px; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.25s; white-space: nowrap; }
+    .search-bar button:hover { background: var(--primary-dark); }
+
+    /* LAYOUT */
+    .main-layout { display: flex; gap: 1.5rem; padding: 2rem 5%; max-width: 1280px; margin: 0 auto; align-items: flex-start; }
+
+    /* FILTER */
+    .filter-panel { width: 240px; flex-shrink: 0; background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 1.5rem; box-shadow: 0 2px 12px rgba(0,0,0,0.05); position: sticky; top: 86px; }
+    .filter-panel h3 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 6px; }
+    .filter-group { margin-bottom: 1.4rem; }
+    .filter-group-title { font-size: 0.78rem; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.7rem; }
+    .bhk-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .bhk-btn { padding: 6px 14px; border: 1.5px solid var(--border); border-radius: 50px; font-size: 0.82rem; font-weight: 500; color: var(--muted); background: var(--bg2); cursor: pointer; transition: all 0.2s; }
+    .bhk-btn:hover, .bhk-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .filter-option { display: flex; align-items: center; gap: 8px; margin-bottom: 0.55rem; cursor: pointer; }
+    .filter-option input[type="radio"] { accent-color: var(--primary); width: 15px; height: 15px; cursor: pointer; }
+    .filter-option label { font-size: 0.85rem; color: var(--text); cursor: pointer; }
+    .btn-clear { width: 100%; padding: 9px; background: transparent; color: var(--primary); border: 1.5px solid var(--primary); border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; transition: background 0.25s, color 0.25s; }
+    .btn-clear:hover { background: var(--primary); color: #fff; }
+
+    /* LISTINGS */
+    .listings-section { flex: 1; }
+    .listings-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.2rem; }
+    .listings-header h2 { font-size: 1.15rem; font-weight: 700; color: var(--text); }
+    .listings-header span { font-size: 0.82rem; color: var(--muted); }
+
+    /* CARDS */
+    .property-list { display: flex; flex-direction: column; gap: 1.2rem; }
+    .property-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; box-shadow: 0 2px 12px rgba(0,0,0,0.05); transition: transform 0.28s, box-shadow 0.28s, border-color 0.28s; animation: fadeUp 0.5s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .property-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(37,99,235,0.12); border-color: rgba(37,99,235,0.25); }
+    .property-img-placeholder { width: 220px; min-height: 180px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #fff; }
+    .placeholder-blue   { background: linear-gradient(135deg, #2563eb, #60a5fa); }
+    .placeholder-green  { background: linear-gradient(135deg, #16a34a, #4ade80); }
+    .placeholder-orange { background: linear-gradient(135deg, #ea580c, #fb923c); }
+    .placeholder-purple { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+    .property-info { padding: 1.2rem 1.4rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .property-top { flex: 1; }
+    .property-badge { display: inline-block; background: var(--primary-light); color: var(--primary); font-size: 0.72rem; font-weight: 700; padding: 3px 12px; border-radius: 50px; margin-bottom: 0.6rem; }
+    .property-title { font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .property-location { font-size: 0.83rem; color: var(--muted); margin-bottom: 0.7rem; display: flex; align-items: center; gap: 4px; }
+    .property-meta { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.8rem; }
+    .meta-item { font-size: 0.8rem; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+    .meta-item strong { color: var(--text); font-weight: 600; }
+    .property-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 0.8rem; border-top: 1px solid var(--border); margin-top: 0.5rem; }
+    .property-price { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
+    .property-price span { font-size: 0.78rem; font-weight: 400; color: var(--muted); }
+    .btn-details { background: var(--primary); color: #fff; border: none; padding: 10px 22px; border-radius: 8px; font-size: 0.88rem; font-weight: 600; cursor: pointer; box-shadow: 0 3px 12px rgba(37,99,235,0.25); transition: background 0.25s, transform 0.2s; }
+    .btn-details:hover { background: var(--primary-dark); transform: translateY(-2px); }
+
+    /* FOOTER */
+    footer { background: #0f172a; color: #64748b; text-align: center; padding: 1.8rem 5%; margin-top: 3rem; font-size: 0.8rem; }
+    .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.4rem; }
+
+    /* RESPONSIVE */
+    @media (max-width: 860px) { .main-layout { flex-direction: column; } .filter-panel { width: 100%; position: static; } .property-img-placeholder { width: 160px; min-height: 150px; } }
+    @media (max-width: 560px) { .property-card { flex-direction: column; } .property-img-placeholder { width: 100%; height: 180px; min-height: unset; } .nav-links { gap: 1rem; } }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="nav-logo">Rent<span>Sphere</span></a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="property.html" class="active">Properties</a></li>
+      <li><a href="vehicle.html">Vehicles</a></li>
+      <li><a href="login.html" class="nav-btn">Login</a></li>
+    </ul>
+  </nav>
+
+  <section class="search-section">
+    <h2>Find Your <span>Perfect Property</span></h2>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search for location, property type, or city..." />
+      <button onclick="searchProperties()">🔍 Search</button>
+    </div>
+  </section>
+
+  <div class="main-layout">
+
+    <aside class="filter-panel">
+      <h3>⚙ Filters</h3>
+      <div class="filter-group">
+        <div class="filter-group-title">BHK Type</div>
+        <div class="bhk-buttons">
+          <button class="bhk-btn" onclick="toggleBHK(this)">1 BHK</button>
+          <button class="bhk-btn" onclick="toggleBHK(this)">2 BHK</button>
+          <button class="bhk-btn" onclick="toggleBHK(this)">3 BHK</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-title">Price Range</div>
+        <div class="filter-option"><input type="radio" name="price" id="p1" checked/><label for="p1">Below ₹10,000</label></div>
+        <div class="filter-option"><input type="radio" name="price" id="p2"/><label for="p2">₹10,000 – ₹20,000</label></div>
+        <div class="filter-option"><input type="radio" name="price" id="p3"/><label for="p3">Above ₹20,000</label></div>
+      </div>
+      <div class="filter-group">
+        <div class="filter-group-title">Availability</div>
+        <div class="filter-option"><input type="radio" name="avail" id="a1" checked/><label for="a1">Immediate</label></div>
+        <div class="filter-option"><input type="radio" name="avail" id="a2"/><label for="a2">Within 15 Days</label></div>
+      </div>
+      <button class="btn-clear" onclick="clearFilters()">Clear Filters</button>
+    </aside>
+
+    <main class="listings-section">
+      <div class="listings-header">
+        <h2>Available Properties</h2>
+        <span id="resultCount">9 results found</span>
+      </div>
+
+      <!-- ✅ SIRF EK property-list div — sare 9 cards andar -->
+      <div class="property-list" id="propertyContainer">
+
+        <!-- Card 1 -->
+        <div class="property-card" data-title="1 bhk apartment in mulund" data-location="mulund mumbai">
+          <div class="property-img-placeholder placeholder-blue">🏠</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">1 BHK</div>
+              <div class="property-title">1 BHK Apartment in Mulund</div>
+              <div class="property-location">📍 Mulund, Mumbai</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>650 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>3rd</strong></div>
+                <div class="meta-item">🛋 Furnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹24,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('1 BHK Apartment in Mulund')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="property-card" data-title="2 bhk flat in andheri west" data-location="andheri west mumbai">
+          <div class="property-img-placeholder placeholder-green">🏡</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">2 BHK</div>
+              <div class="property-title">2 BHK Flat in Andheri West</div>
+              <div class="property-location">📍 Andheri West, Mumbai</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>950 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>5th</strong></div>
+                <div class="meta-item">🛋 Semi-Furnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹38,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('2 BHK Flat in Andheri West')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="property-card" data-title="3 bhk independent house in pune" data-location="kothrud pune">
+          <div class="property-img-placeholder placeholder-orange">🏘</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">3 BHK</div>
+              <div class="property-title">3 BHK Independent House in Pune</div>
+              <div class="property-location">📍 Kothrud, Pune</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>1400 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>Ground</strong></div>
+                <div class="meta-item">🛋 Unfurnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹22,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('3 BHK Independent House in Pune')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="property-card" data-title="2 bhk apartment in navi mumbai" data-location="vashi navi mumbai">
+          <div class="property-img-placeholder placeholder-purple">🏙</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">2 BHK</div>
+              <div class="property-title">2 BHK Apartment in Navi Mumbai</div>
+              <div class="property-location">📍 Vashi, Navi Mumbai</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>870 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>7th</strong></div>
+                <div class="meta-item">🛋 Semi-Furnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹28,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('2 BHK Apartment in Navi Mumbai')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="property-card" data-title="1 bhk flat in thane" data-location="thane west thane">
+          <div class="property-img-placeholder placeholder-green">🏠</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">1 BHK</div>
+              <div class="property-title">1 BHK Flat in Thane</div>
+              <div class="property-location">📍 Thane West, Thane</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>520 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>2nd</strong></div>
+                <div class="meta-item">🛋 Unfurnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹14,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('1 BHK Flat in Thane')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="property-card" data-title="3 bhk apartment in bandra" data-location="bandra west mumbai">
+          <div class="property-img-placeholder placeholder-orange">🏢</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">3 BHK</div>
+              <div class="property-title">3 BHK Apartment in Bandra</div>
+              <div class="property-location">📍 Bandra West, Mumbai</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>1600 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>10th</strong></div>
+                <div class="meta-item">🛋 Fully Furnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹75,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('3 BHK Apartment in Bandra')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 7 -->
+        <div class="property-card" data-title="1 bhk studio in dadar" data-location="dadar mumbai">
+          <div class="property-img-placeholder placeholder-blue">🛖</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">1 BHK</div>
+              <div class="property-title">1 BHK Studio in Dadar</div>
+              <div class="property-location">📍 Dadar, Mumbai</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>400 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>1st</strong></div>
+                <div class="meta-item">🛋 Furnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹18,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('1 BHK Studio in Dadar')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 8 -->
+        <div class="property-card" data-title="2 bhk flat in wakad pune" data-location="wakad pune">
+          <div class="property-img-placeholder placeholder-green">🏡</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">2 BHK</div>
+              <div class="property-title">2 BHK Flat in Wakad Pune</div>
+              <div class="property-location">📍 Wakad, Pune</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>1050 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>4th</strong></div>
+                <div class="meta-item">🛋 Semi-Furnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹19,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('2 BHK Flat in Wakad Pune')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 9 -->
+        <div class="property-card" data-title="3 bhk villa in lonavala" data-location="lonavala pune">
+          <div class="property-img-placeholder placeholder-orange">🏰</div>
+          <div class="property-info">
+            <div class="property-top">
+              <div class="property-badge">3 BHK</div>
+              <div class="property-title">3 BHK Villa in Lonavala</div>
+              <div class="property-location">📍 Lonavala, Pune</div>
+              <div class="property-meta">
+                <div class="meta-item">📐 <strong>2100 sq.ft</strong></div>
+                <div class="meta-item">🏢 Floor: <strong>Ground</strong></div>
+                <div class="meta-item">🛋 Fully Furnished</div>
+              </div>
+            </div>
+            <div class="property-bottom">
+              <div class="property-price">₹55,000 <span>/ month</span></div>
+              <button class="btn-details" onclick="viewDetails('3 BHK Villa in Lonavala')">View Details</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- No results message -->
+        <p id="noResultsMsg" style="display:none; text-align:center; color:red; font-size:1rem; padding:2rem;">
+          😕 No properties found matching your search.
+        </p>
+
+      </div><!-- end property-list -->
+    </main>
+
+  </div><!-- end main-layout -->
+
+  <footer>
+    <div class="footer-logo">RentSphere</div>
+    <p>© 2024 RentSphere. All rights reserved.</p>
+  </footer>
+
+  <script>
+
+    // SEARCH FUNCTION
+    function searchProperties() {
+      var input = document.getElementById('searchInput').value.trim().toLowerCase();
+      var container = document.getElementById('propertyContainer');
+      var cards = document.querySelectorAll('.property-card');
+      var resultCounter = document.getElementById('resultCount');
+
+      if (input === '') {
+        cards.forEach(function(card) { card.style.display = 'flex'; });
+        resultCounter.textContent = cards.length + ' results found';
+        document.getElementById('noResultsMsg').style.display = 'none';
+        return;
+      }
+
+      var matched = [];
+      var unmatched = [];
+
+      cards.forEach(function(card) {
+        var title    = card.getAttribute('data-title').toLowerCase();
+        var location = card.getAttribute('data-location').toLowerCase();
+
+        if (title.includes(input) || location.includes(input)) {
+          matched.push(card);
+          card.style.display = 'flex';
+        } else {
+          unmatched.push(card);
+          card.style.display = 'none';
+        }
+      });
+
+      matched.forEach(function(card) { container.appendChild(card); });
+      unmatched.forEach(function(card) { container.appendChild(card); });
+
+      resultCounter.textContent = matched.length + ' results found';
+      document.getElementById('noResultsMsg').style.display = matched.length === 0 ? 'block' : 'none';
+    }
+
+    // Enter key support
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') searchProperties();
+    });
+
+    // BHK TOGGLE
+    function toggleBHK(btn) {
+      document.querySelectorAll('.bhk-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    }
+
+    // CLEAR FILTERS
+    function clearFilters() {
+      document.querySelectorAll('.bhk-btn').forEach(function(b) { b.classList.remove('active'); });
+      document.getElementById('p1').checked = true;
+      document.getElementById('a1').checked = true;
+      document.getElementById('searchInput').value = '';
+      var cards = document.querySelectorAll('.property-card');
+      cards.forEach(function(card) { card.style.display = 'flex'; });
+      document.getElementById('resultCount').textContent = cards.length + ' results found';
+      document.getElementById('noResultsMsg').style.display = 'none';
+    }
+
+    // VIEW DETAILS
+    function viewDetails(propertyName) {
+      alert('📋 Property Details\n\n' + propertyName + '\n\nBooking feature coming soon!');
+    }
+
+  </script>
+
+</body>
+</html>
